@@ -1,0 +1,110 @@
+:root {
+  /* Landing Page Colors */
+  --primary: #e63946;
+  --secondary: #1d3557;
+  --accent: #457b9d;
+  --light: #f1faee;
+  --success: #2a9d8f;
+  
+  /* Dashboard Colors */
+  --dash-primary: #3498db;
+  --dash-secondary: #2ecc71;
+  --dash-danger: #e74c3c;
+  --dash-warning: #f39c12;
+  --dash-dark: #2c3e50;
+  --dash-light: #ecf0f1;
+  
+  /* Medical Panel Colors */
+  --medical-blue: #1a73e8;
+  --medical-green: #0f9d58;
+  --medical-red: #d93025;
+  --medical-yellow: #f4b400;
+  --medical-gray: #5f6368;
+  
+  /* Emergency Colors */
+  --emergency-red: #dc3545;
+  --warning-yellow: #ffc107;
+  --safe-green: #28a745;
+  --info-blue: #17a2b8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: white; }
+  50% { border-color: #ff9999; }
+}
+
+@keyframes pulse-bg {
+  0%, 100% { background: #fff5f5; }
+  50% { background: #ffeaea; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate {
+  animation: fadeInUp 0.6s ease-out;
+}
+

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidaID - Meu Painel de Saúde</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        /* NAVBAR */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo span {
+            color: var(--danger);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* LAYOUT PRINCIPAL */
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: calc(100vh - 75px);
+        }
+        
+        /* SIDEBAR */
+        .sidebar {
+            background: white;
+            border-right: 1px solid #eee;
+            padding: 25px 0;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: #f8f9fa;
+            border-left-color: var(--primary);
+        }
+        
+        .nav-item.active {
+            background: #e8f4fc;
+            border-left-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* CONTEÚDO PRINCIPAL */
+        .main-content {
+            padding: 30px;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+        }
+        
+        .page-header h1 {
+            font-size: 2.2rem;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        /* CARDS DE STATUS */
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .status-card.temp {
+            border-top: 5px solid var(--danger);
+        }
+        
+        .status-card.heart {
+            border-top: 5px solid var(--primary);
+        }
+        
+        .status-card.meds {
+            border-top: 5px solid var(--secondary);
+        }
+        
+        .status-card.alerts {
+            border-top: 5px solid var(--warning);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 1rem;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+        
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+        
+        .card-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .trend-up {
+            color: var(--danger);
+        }
+        
+        .trend-down {
+            color: var(--secondary);
+        }
+        
+        /* GRÁFICOS */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .chart-header {
+            margin-bottom: 20px;
+        }
+        
+        .chart-header h3 {
+            color: var(--dark);
+            font-size: 1.3rem;
+        }
+        
+        .chart-placeholder {
+            height: 250px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        /* LISTAS */
+        .lists-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .list-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .list-header h3 {
+            color: var(--dark);
+            font-size: 1.3rem;
+        }
+        
+        .add-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .list-items {
+            list-style: none;
+        }
+        
+        .list-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .item-icon.allergy {
+            background: var(--danger);
+        }
+        
+        .item-icon.medication {
+            background: var(--secondary);
+        }
+        
+        .item-icon.condition {
+            background: var(--primary);
+        }
+        
+        .item-content {
+            flex: 1;
+        }
+        
+        .item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .item-desc {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        /* BOTÃO QR */
+        .qr-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .qr-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            display: inline-block;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #95a5a6;
+            font-family: monospace;
+        }
+        
+        .download-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        /* RESPONSIVO */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .status-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .lists-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar {
+                padding: 15px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+        
+        /* ANIMAÇÕES */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* LOADING */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
+            Vida<span>ID</span>
+        </div>
+        
+        <div class="user-menu">
+            <div class="user-avatar">MS</div>
+            <div>
+                <div style="font-weight: 600;">Maria Silva</div>
+                <div style="font-size: 0.9rem; color: #7f8c8d;">Conta Premium</div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-thermometer-half"></i>
+                    <span>Temperatura</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Saúde</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-pills"></i>
+                    <span>Medicação</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-allergies"></i>
+                    <span>Alergias</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Exames</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Familiares</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Ajuda</span>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- CONTEÚDO -->
+        <main class="main-content">
+            <!-- CABEÇALHO -->
+            <div class="page-header fade-in">
+                <h1>Meu Painel de Saúde</h1>
+                <p>Monitoramento em tempo real dos seus dados de saúde</p>
+            </div>
+            
+            <!-- CARDS DE STATUS -->
+            <div class="status-cards fade-in">
+                <div class="status-card temp">
+                    <div class="card-header">
+                        <div class="card-title">TEMPERATURA ATUAL</div>
+                        <div style="color: #e74c3c;">
+                            <i class="fas fa-thermometer-full"></i>
+                        </div>
+                    </div>
+                    <div class="card-value" id="currentTemp">38.2°C</div>
+                    <div class="card-trend">
+                        <i class="fas fa-arrow-up trend-up"></i>
+                        <span class="trend-up">+0.5°C desde ontem</span>
+                    </div>
+                </div>
+                
+                <div class="status-card heart">
+                    <div class="card-header">
+                        <div class="card-title">FREQUÊNCIA CARDÍACA</div>
+                        <div style="color: #3498db;">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">78 BPM</div>
+                    <div class="card-trend">
+                        <i class="fas fa-arrow-down trend-down"></i>
+                        <span class="trend-down">Normal</span>
+                    </div>
+                </div>
+                
+                <div class="status-card meds">
+                    <div class="card-header">
+                        <div class="card-title">PRÓXIMA MEDICAÇÃO</div>
+                        <div style="color: #2ecc71;">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">2 horas</div>
+                    <div class="card-trend">
+                        <i class="fas fa-clock"></i>
+                        <span>Losartana 50mg</span>
+                    </div>
+                </div>
+                
+                <div class="status-card alerts">
+                    <div class="card-header">
+                        <div class="card-title">ALERTAS ATIVOS</div>
+                        <div style="color: #f39c12;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">1</div>
+                    <div class="card-trend">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Febre detectada</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GRÁFICOS -->
+            <div class="charts-container fade-in" style="animation-delay: 0.2s;">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Histórico de Temperatura (24h)</h3>
+                    </div>
+                    <div class="chart-placeholder">
+                        <i class="fas fa-chart-line" style="font-size: 3rem; margin-right: 15px;"></i>
+                        Gráfico de temperatura será exibido aqui
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Status de Saúde</h3>
+                    </div>
+                    <div class="chart-placeholder">
+                        <i class="fas fa-heart" style="font-size: 3rem; margin-right: 15px;"></i>
+                        Indicadores de saúde
+                    </div>
+                </div>
+            </div>
+            
+            <!-- LISTAS -->
+            <div class="lists-container fade-in" style="animation-delay: 0.3s;">
+                <!-- ALERGIAS -->
+                <div class="list-card">
+                    <div class="list-header">
+                        <h3>Alergias Graves</h3>
+                        <button class="add-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <ul class="list-items">
+                        <li class="list-item">
+                            <div class="item-icon allergy">
+                                <i class="fas fa-allergies"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Penicilina</div>
+                                <div class="item-desc">Reação: Anafilaxia • Crítica</div>
+                            </div>
+                        </li>
+                        <li class="list-item">
+                            <div class="item-icon allergy">
+                                <i class="fas fa-allergies"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Iodo</div>
+                                <div class="item-desc">Reação: Dermatite Grave</div>
+                            </div>
+                        </li>
+                        <li class="list-item">
+                            <div class="item-icon allergy">
+                                <i class="fas fa-allergies"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Castanha</div>
+                                <div class="item-desc">Reação: Inchaço Facial</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- MEDICAÇÃO -->
+                <div class="list-card">
+                    <div class="list-header">
+                        <h3>Medicação Atual</h3>
+                        <button class="add-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <ul class="list-items">
+                        <li class="list-item">
+                            <div class="item-icon medication">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Metformina 850mg</div>
+                                <div class="item-desc">2x ao dia • Próxima: 20:00</div>
+                            </div>
+                            <div style="color: #2ecc71;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </li>
+                        <li class="list-item">
+                            <div class="item-icon medication">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Losartana 50mg</div>
+                                <div class="item-desc">1x ao dia • Próxima: 20:00</div>
+                            </div>
+                        </li>
+                        <li class="list-item">
+                            <div class="item-icon medication">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">AAS 100mg</div>
+                                <div class="item-desc">1x ao dia • Tomada: 08:00</div>
+                            </div>
+                            <div style="color: #2ecc71;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- CONDIÇÕES -->
+                <div class="list-card">
+                    <div class="list-header">
+                        <h3>Condições Médicas</h3>
+                        <button class="add-btn">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <ul class="list-items">
+                        <li class="list-item">
+                            <div class="item-icon condition">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Diabetes Tipo 2</div>
+                                <div class="item-desc">Diagnosticado: 2010 • Controlado</div>
+                            </div>
+                        </li>
+                        <li class="list-item">
+                            <div class="item-icon condition">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Hipertensão</div>
+                                <div class="item-desc">Controlada com medicação</div>
+                            </div>
+                        </li>
+                        <li class="list-item">
+                            <div class="item-icon condition">
+                                <i class="fas fa-bone"></i>
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">Artrite Reumatoide</div>
+                                <div class="item-desc">Em remissão</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- QR CODE -->
+            <div class="qr-section fade-in" style="animation-delay: 0.4s;">
+                <div class="qr-card">
+                    <h3 style="margin-bottom: 15px; color: #2c3e50;">Seu QR Code de Emergência</h3>
+                    <p style="color: #7f8c8d; margin-bottom: 20px; max-width: 400px;">
+                        Este QR Code contém todas as suas informações médicas críticas.
+                        Em caso de emergência, paramédicos podem escanear para acessar seus dados.
+                    </p>
+                    
+                    <div class="qr-code">
+                        <div style="text-align: center;">
+                            <div style="margin-bottom: 10px;">[QR CODE]</div>
+                            <div style="font-size: 0.8rem;">VID123456</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <button class="download-btn">
+                            <i class="fas fa-print"></i>
+                            Imprimir QR Code
+                        </button>
+                        <button class="download-btn" style="background: #95a5a6; margin-left: 10px;">
+                            <i class="fas fa-share-alt"></i>
+                            Compartilhar
+                        </button>
+                    </div>
+                    
+                    <div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 15px;">
+                        <i class="fas fa-info-circle"></i>
+                        Atualizado automaticamente quando seus dados mudam
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // DADOS DO USUÁRIO
+        const userData = {
+            name: "Maria Silva",
+            email: "maria@email.com",
+            plan: "Premium",
+            currentTemp: 38.2,
+            heartRate: 78,
+            nextMeds: "Losartana 50mg",
+            nextMedsTime: "20:00",
+            alerts: 1
+        };
+        
+        // ELEMENTOS
+        const currentTempEl = document.getElementById('currentTemp');
+        
+        // ATUALIZAR TEMPERATURA DINÂMICA
+        function updateDashboard() {
+            // Simular variação de temperatura
+            const variation = (Math.random() - 0.5) * 0.1;
+            userData.currentTemp = Math.max(36.0, Math.min(39.0, userData.currentTemp + variation));
+            
+            // Atualizar display
+            currentTempEl.textContent = `${userData.currentTemp.toFixed(1)}°C`;
+            
+            // Atualizar variáveis simuladas
+            userData.heartRate = Math.floor(70 + Math.random() * 20);
+            document.querySelector('.status-card.heart .card-value').textContent = `${userData.heartRate} BPM`;
+            
+            // Simular próxima medicação
+            const now = new Date();
+            const nextHour = now.getHours() + 2;
+            userData.nextMedsTime = `${nextHour}:00`;
+            document.querySelector('.status-card.meds .card-value').textContent = '2 horas';
+            document.querySelector('.status-card.meds .card-trend span').textContent = userData.nextMeds;
+            
+            console.log(`Dashboard atualizado: ${userData.currentTemp}°C, ${userData.heartRate} BPM`);
+        }
+        
+        // NAVEGAÇÃO DA SIDEBAR
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remover classe ativa de todos
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Adicionar classe ativa ao clicado
+                this.classList.add('active');
+                
+                // Aqui você implementaria a mudança de página
+                const pageName = this.querySelector('span').textContent;
+                console.log(`Navegando para: ${pageName}`);
+            });
+        });
+        
+        // BOTÕES DE ADICIONAR
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const listType = this.closest('.list-card').querySelector('h3').textContent;
+                alert(`Adicionar novo item em: ${listType}`);
+                // Aqui você abriria um modal de formulário
+            });
+        });
+        
+        // BOTÕES DE DOWNLOAD
+        document.querySelectorAll('.download-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.textContent.includes('Imprimir')) {
+                    window.print();
+                } else {
+                    alert('Compartilhamento de QR Code');
+                    // Implementar compartilhamento
+                }
+            });
+        });
+        
+        // INICIALIZAÇÃO
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard VidaID carregado');
+            
+            // Atualizar dados a cada 2 minutos
+            setInterval(updateDashboard, 120000);
+            
+            // Primeira atualização
+            updateDashboard();
+            
+            // Simular carregamento
+            setTimeout(() => {
+                document.querySelectorAll('.chart-placeholder').forEach(chart => {
+                    chart.innerHTML = '<canvas id="tempChart" width="400" height="200"></canvas>';
+                    // Aqui você inicializaria um gráfico real com Chart.js
+                });
+            }, 1000);
+            
+            // NOTIFICAÇÕES
+            if ('Notification' in window && Notification.permission === 'granted') {
+                // Verificar se há alertas críticos
+                if (userData.currentTemp > 37.8) {
+                    new Notification('⚠️ Alerta de Febre', {
+                        body: `Sua temperatura está em ${userData.currentTemp.toFixed(1)}°C`,
+                        icon: 'https://img.icons8.com/color/96/medical-id.png'
+                    });
+                }
+            }
+        });
+        
+        // SOLICITAR PERMISSÃO PARA NOTIFICAÇÕES
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+        
+        // OFFLINE SUPPORT
+        window.addEventListener('online', () => {
+            console.log('Conectado - sincronizando dados...');
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('Offline - usando dados em cache');
+        });
+    </script>
+</body>
+</html>
+
